@@ -72,6 +72,11 @@ Congratulations! You have successfully written and deployed a production smart c
 * [Opezeppelin Resources](https://docs.openzeppelin.com/contracts/4.x/)
 * [Upgradable Smart Contracts](https://docs.google.com/presentation/d/1N8vnMXDfkqQv4x1Snp-GauKHT0eQ7dj3fG-qs8ryntg)
 
+### Best Practices and Style Guides
+* Solidity style: https://docs.soliditylang.org/en/v0.8.17/style-guide.html
+* Foundry: https://book.getfoundry.sh/tutorials/best-practices
+* Security: https://consensys.github.io/smart-contract-best-practices/
+
 ### Recommended Tools
 * [Hardhat](https://hardhat.org/getting-started/)
 * [Typescript](https://www.typescriptlang.org/) and [Type Chain](https://github.com/dethcrypto/TypeChain)
