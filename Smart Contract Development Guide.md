@@ -71,7 +71,7 @@ You technically can deploy to testnet anytime to test as long as you are comfort
 Once your code is ready, time to have the code audited by a 3rd party. You can always choose a different option like [code4rena](https://code4rena.com/). The goal here is to get an independent party to review the code before millions of dollars go in it.
 
 
-## Phase 6 - Mainnet Deployment
+## Phase 5 - Mainnet Deployment
 
 ### Prerequisites
 * Make sure you have monitoring and alarming setup.
