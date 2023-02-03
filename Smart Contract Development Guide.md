@@ -112,6 +112,7 @@ Congratulations! You have successfully written and deployed a production smart c
   * [Solidity Gas Reporter](https://www.npmjs.com/package/hardhat-gas-reporter)
   * [Hardhat Etherscan](https://hardhat.org/plugins/nomiclabs-hardhat-etherscan.html)
 * Fuzzing tool [Echidna](https://github.com/crytic/echidna)
+  * [A complimentary tool for the foundry fuzzer](https://github.com/a16z/halmos)
 * [Slither](https://github.com/crytic/slither)
 * [Sollint](https://protofire.github.io/solhint/)
 * [Etherscan](https://etherscan.io/)
