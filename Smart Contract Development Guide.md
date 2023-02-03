@@ -5,16 +5,22 @@ This essay outlines the phases to write Mainnet ready Solidity smart contracts f
 In a nutshell, the process of smart contracts goes like the following.
 
 ***Design Specifications*** -> 
+
 ***Code Implementation*** -> 
+
+***End to End Testing/Staging Environment*** -> 
+
 ***External Auditing*** -> 
-***Testnet Deployment*** ->
+
 ***Mainnet Deployment*** -> 
+
 ***Contract Maintenance***
 
 Read through each phase carefully. You may need to kick off later phases to speed up the process and reduce idle waiting time (like securing an audit slot early as you may not get an auditing slot right away).
 
 ## Phase 1 - Design Specification
-First design your contract interfaces and identify special address access and future maintenance based on product needs.
+Understand the product and define the features requested.
+First design your contract interfaces and identify associated risks and future maintenance based on product needs.
 
 Figure out answers to the following questions.
 * __Do the contracts need to be all or partially upgradable?__ Will you need to update the code in the future? Upgradability provides flexibility, but also increases security concerns. There are resources available in the learning resources section for upgradable smart contracts.
@@ -26,37 +32,56 @@ Figure out answers to the following questions.
 * __Are there public battle tested contracts that do what you need already?__ If so, it might be better to use them if there are no other concerns as they are battle tested.
 * __Will you need an indexer?__ If so, write your event with that in mind.
 
-The goal in this phase is to figure out what you are building, for who and why.
+The goal in this phase is to figure out what you are building, for who and why. Estimate time it will take to build and descope accordingly with product if it exceed original estimates.
 
 ## Phase 2 - Code Implementation
 At this phase, you know what you are building and you are ready to get your hands dirty: write the smart contract.
 
-> Note: you may want to also start step 3 to secure an external auditing slot.
+> Note: you may want to also start phase 4 to secure an external auditing slot.
 
-Checkout the appendix sections for recommended tools and interesting boilerplates to get you started.
+Checkout the appendix sections for recommended tools and interesting boilerplates to get you started. 
+
+A few general guidelines:
+* Follow the best practices and style guides:
+  * [Solidity style](https://docs.soliditylang.org/en/v0.8.17/style-guide.html)
+  * [Foundry](https://book.getfoundry.sh/tutorials/best-practices)
+  * [Security](https://consensys.github.io/smart-contract-best-practices/)
+* Run formatter to clean up syntax.
+* Run [slither](https://github.com/crytic/slither).
 
 Write your contracts and tests, 90% coverage is good and 100% is great.
 * __Unit Tests.__ Test each public/external function and all possible scenarios for inputs to functions. For example, test a `swap` function to swap assets correctly.
-* __Integration tests.__ Test a complete user flow (usually have more than one function). For example, in an ERC20 contract, you may want to test the scenario where a user can approve and allow a 3rd party contract/user to transfer assets out of their wallet.
-* __Mainnet simulation.__ Especially if your contract needs to interact with a 3rd party contract. [Fork the mainnet](https://hardhat.org/hardhat-network/guides/mainnet-forking.html), and test your contract in the simulated environment against the current state of the mainnet.
 * __Fuzzing.__ Run a fuzzer, like echidna (see recommended tools), against your contract to further identify potential bugs/vulnerabilities.
 Your code should be reviewed by at least 1 fellow blockchain engineer. PR approved, Code merged. Time for the next steps.
+* __Integration tests.__ Test a complete user flow (usually have more than one function). For example, in an ERC20 contract, you may want to test the scenario where a user can approve and allow a 3rd party contract/user to transfer assets out of their wallet.
+  * Controlled Integration Testing. You deploy both your contracts and dependencies contracts locally, control all the settings, and tests if your contracts indeed do what they intend. 
+  * Semi-Controlled Integration Testing. Here, you [fork the mainnet](https://hardhat.org/hardhat-network/guides/mainnet-forking.html) where your contracts will eventually be deployed to locally, and deploy your contracts. Now your contracts can interact with the forked dependencies. You can test if your contracts still behave the way you want when your dependencies is not completely controlled (tho you can still impersonate users to make changes to those forked dependencies).
 
-## Phase 3 - External Auditing
+## Phase 3 - End to End Testing/Staging Environment
+In this phase, we do some end to end testing the same way your customers would use your product/feature. This should also be your staging environment where you test features end to end before release.
+
+There is no restriction on which testnet to use. It usually depends on which testnet has your dependencies. ([example local deploy script](https://github.com/trinity-0111/NFT-templates/blob/main/scripts/SimpleNFT-deploy.ts)).
+
+Deploy smart contracts to a testnet, and connect frontend and supporting backend services with the deployed testnet contracts. Use the product/feature the same your intended customers would use. Change and fix code and process as discovered.
+
+You technically can deploy to testnet anytime to test as long as you are comfortable with the fact the code will be in public on the testnet chain.
+
+## Phase 4 - External Auditing
 
 Once your code is ready, time to have the code audited by a 3rd party. You can always choose a different option like [code4rena](https://code4rena.com/). The goal here is to get an independent party to review the code before millions of dollars go in it.
 
-## Phase 4 - Testnet Deployment
-There is no restriction on which testnet to use. It usually depends on which testnet has your dependencies. 
-* __Deploy your contract to a testnet__ ([example local deploy script](https://github.com/trinity-0111/NFT-templates/blob/main/scripts/SimpleNFT-deploy.ts)).
-* This is your staging environment. Frontend, backend should all be hooked up to the testnet and Product should be able to test your final product on testnet.
-You technically can deploy to testnet anytime to test as long as you are comfortable with the fact the code will be in public on the testnet chain.
 
-## Phase 5 - Mainnet Deployment
+## Phase 6 - Mainnet Deployment
+
+### Prerequisites
+* Make sure you have monitoring and alarming setup.
+* Make sure you have an updated incident response plan.
+
 Deploy your contract to Mainnet ([example local deploy script](https://github.com/trinity-0111/NFT-templates/blob/main/scripts/SimpleNFT-deploy.ts)). Transfer ownership (if any) to a multi-sig or MPC wallet or some other wallet that is not controlled by one person.
 
 ## Phase 6 - Contract Maintenance
 You may need to maintain the contracts, like upgrade to new versions if they are upgradable, adjust fee or other parameters.
+
 However, at this point, only special roles (addresses usually not controlled by one person, should be designed in Phase 1) can make those changes. Based on the actually implementation of those wallet, you will have different maintenance process:
 * __Multi-sigs__. Use [gnosis safes](https://gnosis.io/safe/) as an example, you should be able to use both their web app to start a transaction manually or their Safe transaction service to start a transaction through code. Only the required amount of signers signed the transaction, you can execute the maintenance transaction.
 
